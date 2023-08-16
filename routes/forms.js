@@ -12,6 +12,7 @@ router.post("/add_questions/:userId" , async (req ,res , next) => {
         const form = await Form.create(req.body)
         const user = await User.findById(userId)
         user.forms.push(form._id)
+        await user.save()
         res.status(200).json(form)
     } catch (err) {
         next(err)
