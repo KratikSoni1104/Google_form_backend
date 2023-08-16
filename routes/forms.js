@@ -54,9 +54,14 @@ router.put("/renameData/:id" , async (req , res , next) => {
     }
 })
 
-router.put("/removeData/:id" , async (req , res , next) =>{ 
-    const id = req.params.id
+router.put("/removeData/:userId/:formId" , async (req , res , next) =>{ 
+    const userId = req.params.userId;
+    const formId = req.params.formId;
     try {
+        const user = await User.findById(userId)
+        const index = user.forms.indexOf(formId)
+        user.forms.splice(index, 1)
+        await user.save()
         await Form.findByIdAndDelete(id)
         res.status(200).json("Data removed")
     } catch (err) {
