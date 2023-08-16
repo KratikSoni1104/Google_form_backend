@@ -62,7 +62,7 @@ router.delete("/removeData/:userId/:formId" , async (req , res , next) =>{
         const index = user.forms.indexOf(formId)
         user.forms.splice(index, 1)
         await user.save()
-        await Form.findByIdAndDelete(id)
+        await Form.findByIdAndDelete(formId)
         res.status(200).json("Data removed")
     } catch (err) {
         next(err)
