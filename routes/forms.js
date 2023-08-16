@@ -54,7 +54,7 @@ router.put("/renameData/:id" , async (req , res , next) => {
     }
 })
 
-router.put("/removeData/:userId/:formId" , async (req , res , next) =>{ 
+router.delete("/removeData/:userId/:formId" , async (req , res , next) =>{ 
     const userId = req.params.userId;
     const formId = req.params.formId;
     try {
