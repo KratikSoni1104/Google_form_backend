@@ -51,5 +51,44 @@ router.post("/login" , async (req , res , next) => {
     }
 });
 
+router.get("/getAll" , async (req , res , next) => {
+    try{
+        const users = await User.find();
+        res.status(200).json(users);
+    } catch(err) {
+        next(err);
+    }
+})
+
+// router.post("/storeGoogleUser", async (req, res, next) => {
+//     const { email, username} = req.body;
+  
+//     try {
+//       // Check if the user with the provided email already exists
+//       let user = await User.findOne({ email });
+  
+//       if (!user) {
+//         // Create a new user if not found
+//         user = new User({
+//           email,
+//           username,
+//         });
+  
+//         await user.save();
+//       } else {
+//         // Update the existing user's profile information
+//         user.username = username;
+//         //user.profileImage = photoURL;
+//         await user.save();
+//       }
+  
+//       console.log("hello");
+//       res.status(200).json("User stored successfully");
+//     } catch (error) {
+//       next(error)
+//     }
+//   });
+  
+
 
 export default router;

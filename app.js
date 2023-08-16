@@ -34,10 +34,6 @@ mongoose.connection.on("disconnected" , () => {
 app.use(express.json())
 app.use(cors());
 
-app.get("/" , (req,res) => {
-    res.send("hello")
-})
-
 app.use("/api/auth",  authRoute);
 app.use("/api/form" , formRoute)
 

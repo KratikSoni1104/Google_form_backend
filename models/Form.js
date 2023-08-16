@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { User } from "./User.js";
 
 const optionSchema = new mongoose.Schema({
     optionText: String,
@@ -16,6 +17,7 @@ const formSchema = new mongoose.Schema({
 doc_name: String,
 doc_desc: String,
 questions: [questionSchema],
+createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 export const Form = new mongoose.model("Form" , formSchema)

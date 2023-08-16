@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import {Form} from "../models/Form.js"
 
 const userSchema = new mongoose.Schema({
     username:{
@@ -15,9 +16,7 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    forms:{
-        type:[String]
-    }
+    forms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Form" }],
 })
 
 export const User = new mongoose.model("User" , userSchema)

@@ -1,6 +1,7 @@
 import express from "express"
 import { Form } from "../models/Form.js";
 import excel from "exceljs"
+import { User } from "../models/User.js";
 
 const router = express.Router();
 
@@ -39,14 +40,27 @@ router.put("/updateData/:id" , async (req , res , next) => {
 })
 
 //get
-router.get("/get_all_filenames" , async (req , res , next) => {
+router.get("/get_all_filenames/:UserId" , async (req , res , next) => {
+    const userId = req.params.UserId
     try {
-        const forms = await Form.find()
-        res.status(200).json(forms)
+        const user = await User.findById(userId)
+        res.status(200).json(user.forms)
+        console.log(user);
     } catch(err) {
         next(err)
     }
 })
+
+router.get("/getUser" , async (req ,res , next) => {
+    const id = req.params.id;
+    try{
+        const res = await User.find()
+        res.status(200).json(res)
+    } catch(err) {
+        next(err)
+    }
+})
+
 
 //to store response in excel
 router.post("/student_response/:doc_name", (req, res) => {
