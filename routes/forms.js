@@ -47,7 +47,8 @@ router.get("/get_all_filenames/:UserId" , async (req , res , next) => {
     const userId = req.params.UserId
     try {
         const user = await User.findById(userId)
-        res.status(200).json(user.forms)
+        const forms = user.forms.map(formId => Form.findById(formId))
+        res.status(200).json(forms)
         console.log(user);
     } catch(err) {
         next(err)
