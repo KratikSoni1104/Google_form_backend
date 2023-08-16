@@ -42,6 +42,28 @@ router.put("/updateData/:id" , async (req , res , next) => {
     }
 })
 
+router.put("/renameData/:id" , async (req , res , next) => {
+    const id = req.params.id
+    try{
+        const updatedForm = await Form.findByIdAndUpdate(id,
+            { $set: req.body },
+            { new: true })
+        res.status(200).json(updatedForm)
+    } catch (err) {
+        next(err)
+    }
+})
+
+router.put("/removeData/:id" , async (req , res , next) =>{ 
+    const id = req.params.id
+    try {
+        await Form.findByIdAndDelete(id)
+        res.status(200).json("Data removed")
+    } catch (err) {
+        next(err)
+    }
+})
+
 //get
 router.get("/get_all_filenames/:UserId", async (req, res, next) => {
     const userId = req.params.UserId;
