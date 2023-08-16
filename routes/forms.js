@@ -43,17 +43,24 @@ router.put("/updateData/:id" , async (req , res , next) => {
 })
 
 //get
-router.get("/get_all_filenames/:UserId" , async (req , res , next) => {
-    const userId = req.params.UserId
+router.get("/get_all_filenames/:UserId", async (req, res, next) => {
+    const userId = req.params.UserId;
     try {
-        const user = await User.findById(userId)
-        const forms = user.forms.map(formId => Form.findById(formId))
-        res.status(200).json(forms)
-        console.log(user);
-    } catch(err) {
-        next(err)
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      const formPromises = user.forms.map(formId => Form.findById(formId));
+      const forms = await Promise.all(formPromises);
+  
+      res.status(200).json(forms);
+    } catch (err) {
+      next(err);
     }
-})
+  });
+  
 
 
 //to store response in excel
