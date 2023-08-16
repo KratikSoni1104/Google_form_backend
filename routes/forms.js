@@ -11,7 +11,7 @@ router.post("/add_questions/:userId" , async (req ,res , next) => {
     try {
         const form = await Form.create(req.body)
         const user = await User.findById(userId)
-        user.form.push(form)
+        user.forms.push(form)
         res.status(200).json(form)
     } catch (err) {
         next(err)
