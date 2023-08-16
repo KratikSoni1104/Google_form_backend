@@ -51,14 +51,7 @@ router.post("/login" , async (req , res , next) => {
     }
 });
 
-router.get("/getAll" , async (req , res , next) => {
-    try{
-        const users = await User.find();
-        res.status(200).json(users);
-    } catch(err) {
-        next(err);
-    }
-})
+
 
 // router.post("/storeGoogleUser", async (req, res, next) => {
 //     const { email, username} = req.body;

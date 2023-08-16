@@ -6,11 +6,13 @@ import { User } from "../models/User.js";
 const router = express.Router();
 
 //to create a form
-router.post("/add_questions" , async (req ,res , next) => {
-    const newForm = new Form(req.body)
-    try{
-        const savedForm = await newForm.save();
-        res.status(200).json(savedForm)
+router.post("/add_questions/:userId" , async (req ,res , next) => {
+    const userId = req.params.userId;
+    try {
+        const form = await Form.create(req.body)
+        const user = await User.findById(userId)
+        user.form.push(form)
+        res.status(200).json(form)
     } catch (err) {
         next(err)
     }
@@ -46,16 +48,6 @@ router.get("/get_all_filenames/:UserId" , async (req , res , next) => {
         const user = await User.findById(userId)
         res.status(200).json(user.forms)
         console.log(user);
-    } catch(err) {
-        next(err)
-    }
-})
-
-router.get("/getUser" , async (req ,res , next) => {
-    const id = req.params.id;
-    try{
-        const res = await User.find()
-        res.status(200).json(res)
     } catch(err) {
         next(err)
     }
