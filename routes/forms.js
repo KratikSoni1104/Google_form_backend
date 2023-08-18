@@ -32,6 +32,7 @@ router.get("/data/:id" , async (req , res , next) => {
 
 //update
 router.put("/updateData/:id" , async (req , res , next) => {
+    console.log(req.body);
     try{
         const updatedForm = await Form.findByIdAndUpdate(req.params.id,
             { $set: req.body },
