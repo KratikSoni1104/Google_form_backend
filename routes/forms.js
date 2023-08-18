@@ -116,4 +116,13 @@ router.post("/student_response/:doc_name", (req, res) => {
     });
 });
 
+router.get("/generateLink/:formId", async (req, res , next) => {
+    try{
+        const link = `https://googleform.com/forms/${req.params.formId}`
+        res.status(200).json({link: link});
+    } catch(err){   
+        next(err)
+    }
+})
+
 export default router
