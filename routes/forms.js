@@ -116,14 +116,5 @@ router.post("/student_response/:doc_name", (req, res) => {
     });
 });
 
-router.get("/generateLink/:formId", async (req, res , next) => {
-    try{
-        const form = await Form.findById(req.params.formId)
-        const link = `https://google-form-backend2-0.onrender.com/api/forms/form_link/${form._id}`
-        res.status(200).json({link: link});
-    } catch(err){   
-        next(err)
-    }
-})
 
 export default router
