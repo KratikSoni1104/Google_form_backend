@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import { User } from "./User.js";
 
 const optionSchema = new mongoose.Schema({
-    optionText: String,
+    optionsText: String,
 });
   
 const questionSchema = new mongoose.Schema({
