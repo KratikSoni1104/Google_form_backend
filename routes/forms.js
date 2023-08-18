@@ -55,20 +55,35 @@ router.put("/renameData/:id" , async (req , res , next) => {
     }
 })
 
-router.delete("/removeData/:userId/:formId" , async (req , res , next) =>{ 
+router.delete("/removeData/:userId/:formId", async (req, res, next) => {
     const userId = req.params.userId;
     const formId = req.params.formId;
     try {
-        const user = await User.findById(userId)
-        const index = user.forms.indexOf(formId)
-        user.forms.splice(index, 1)
-        await user.save()
-        await Form.findByIdAndDelete(formId)
-        res.status(200).json("Data removed")
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json("User not found");
+        }
+
+        const index = user.forms.indexOf(formId);
+        if (index === -1) {
+            return res.status(404).json("Form not found for this user");
+        }
+
+        user.forms.splice(index, 1);
+        await user.save();
+
+        const deletedForm = await Form.findByIdAndDelete(formId);
+        if (!deletedForm) {
+            return res.status(404).json("Form not found");
+        }
+
+        res.status(200).json("Data removed");
     } catch (err) {
-        next(err)
+        console.error("Error:", err);
+        next(err);
     }
-})
+});
+
 
 //get
 router.get("/get_all_filenames/:UserId", async (req, res, next) => {
