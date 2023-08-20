@@ -116,16 +116,16 @@ router.post("/submit/:formId", async (req, res, next) => {
     }
 })
 
-router.get("/responseCount/:formId" ,async (req , res , next) => {
-    try{
-        const formId = req.params.formId;
-        const count = await Promise.all(Response.countDocuments(formId))
-        res.status(200).json({success : true, count : count });
-    } catch(err) {
-        next(err);
+router.get("/responseCount/:formId", async (req, res, next) => {
+    try {
+      const formId = req.params.formId;
+      const count = await Response.countDocuments({ formId });
+      res.status(200).json({ success: true, count: count });
+    } catch (err) {
+      next(err);
     }
-})
-
+  });
+  
 
 //to store response in excel
 router.post("/student_response/:doc_name", (req, res) => {
