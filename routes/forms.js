@@ -119,7 +119,7 @@ router.post("/submit/:formId", async (req, res, next) => {
 router.get("/responseCount/:formId" ,async (req , res , next) => {
     try{
         const formId = req.params.formId;
-        const count = await Response.countDocuments(formId)
+        const count = await Promise.all(Response.countDocuments(formId))
         res.status(200).json({success : true, count : count });
     } catch(err) {
         next(err);
