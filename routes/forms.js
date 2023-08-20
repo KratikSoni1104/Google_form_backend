@@ -2,6 +2,7 @@ import express from "express"
 import { Form } from "../models/Form.js";
 import excel from "exceljs"
 import { User } from "../models/User.js";
+import { Response } from "../models/Response.js";
 
 const router = express.Router();
 
@@ -105,7 +106,13 @@ router.get("/get_all_filenames/:UserId", async (req, res, next) => {
   });
   
 router.post("/submit/:formId", async (req, res, next) => {
-    
+    try{
+        const newResp = new Response(req.body);
+        const savedResp = await newResp.save();
+        res.status(200).json(savedResp)
+    } catch(err) {
+        next(err);
+    }
 })
 
 
