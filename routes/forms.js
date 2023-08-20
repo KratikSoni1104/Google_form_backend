@@ -104,12 +104,23 @@ router.get("/get_all_filenames/:UserId", async (req, res, next) => {
       next(err);
     }
   });
-  
+
+// to store the response data
 router.post("/submit/:formId", async (req, res, next) => {
     try{
         const newResp = new Response(req.body);
         const savedResp = await newResp.save();
         res.status(200).json(savedResp)
+    } catch(err) {
+        next(err);
+    }
+})
+
+router.get("/responseCount/:formId" ,async (req , res , next) => {
+    try{
+        const formId = req.params.formId;
+        const count = await Response.countDocuments(formId)
+        res.status(200).json({success : true, count : count });
     } catch(err) {
         next(err);
     }
