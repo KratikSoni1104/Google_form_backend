@@ -18,6 +18,7 @@ doc_name: String,
 doc_desc: String,
 questions: [questionSchema],
 createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+status:{type:Boolean},
 });
 
 export const Form = new mongoose.model("Form" , formSchema)

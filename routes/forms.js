@@ -6,6 +6,60 @@ import { Response } from "../models/Response.js";
 
 const router = express.Router();
 
+
+
+//to get form data
+router.get("/data/:id" , async (req , res , next) => {
+    const id = req.params.id;
+    try {
+        const form = await Form.findById(id)
+        res.status(200).json(form)
+    } catch(err) {
+        next(err)
+    }
+})
+
+//get
+router.get("/get_all_filenames/:UserId", async (req, res, next) => {
+    const userId = req.params.UserId;
+    try {
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      const formPromises = user.forms.map(formId => Form.findById(formId));
+      const forms = await Promise.all(formPromises);
+  
+      res.status(200).json(forms);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get("/responseCount/:formId", async (req, res, next) => {
+    try {
+      const formId = req.params.formId;
+      const count = await Response.countDocuments({ formId });
+      res.status(200).json({ success: true, count: count });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  //to read status of form
+  router.get("readStatus/:formId", async (req, res, next) => {
+    const formId = req.params.formId;
+    try{
+        const form = await Form.findById(formId);
+        const status = form.status;
+        res.status(200).json(status)
+    } catch (err) {
+        next(err);  
+    }
+  })
+
 //to create a form
 router.post("/add_questions/:userId" , async (req ,res , next) => {
     const userId = req.params.userId;
@@ -20,16 +74,45 @@ router.post("/add_questions/:userId" , async (req ,res , next) => {
     }
 })
 
-//to get form data
-router.get("/data/:id" , async (req , res , next) => {
-    const id = req.params.id;
-    try {
-        const form = await Form.findById(id)
-        res.status(200).json(form)
+// to store the response data
+router.post("/submit/:formId", async (req, res, next) => {
+    try{
+        const newResp = new Response(req.body);
+        const savedResp = await newResp.save();
+        res.status(200).json(savedResp)
     } catch(err) {
-        next(err)
+        next(err);
     }
 })
+
+
+
+
+//to store response in excel
+router.post("/student_response/:doc_name", (req, res) => {
+    var docs_data = req.body;
+    var name = req.params.doc_name;
+    let workbook = new excel.Workbook();
+    var data = req.body.answer_data;
+    let worksheet = workbook.addWorksheet(`${name}`);
+
+    worksheet.columns = [{ header: "Time Stamp", key: "datetime" }, ...docs_data.column];
+    worksheet.columns.forEach(column => {
+        column.width = column.header.length < 12 ? 12 : column.header.length;
+    });
+
+    worksheet.getRow(1).font = { bold: true };
+    data.forEach(e => {
+        worksheet.addRow({ datetime: new Date(), ...e }); // Assuming datetime should be the timestamp for each row
+    });
+
+    workbook.xlsx.writeFile(`${name}.xlsx`).then(() => {
+        res.send("Excel file generated and saved successfully");
+    }).catch(err => {
+        console.error("Error generating Excel file:", err);
+        res.status(500).send("Error generating Excel file");
+    });
+});
 
 //update
 router.put("/updateData/:id" , async (req , res , next) => {
@@ -50,6 +133,17 @@ router.put("/renameData/:id" , async (req , res , next) => {
         const updatedForm = await Form.findByIdAndUpdate(id,
             { $set: req.body },
             { new: true })
+        res.status(200).json(updatedForm)
+    } catch (err) {
+        next(err)
+    }
+})
+
+//to update the status of the form
+router.put("/statusUpdate/:id" , async (req , res , next) => {
+    const id = req.params.id
+    try{
+        const updatedForm = await Form.findByIdAndUpdate(id, { $set: req.body },{ new: true })
         res.status(200).json(updatedForm)
     } catch (err) {
         next(err)
@@ -86,72 +180,9 @@ router.delete("/removeData/:userId/:formId", async (req, res, next) => {
 });
 
 
-//get
-router.get("/get_all_filenames/:UserId", async (req, res, next) => {
-    const userId = req.params.UserId;
-    try {
-      const user = await User.findById(userId);
-  
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      const formPromises = user.forms.map(formId => Form.findById(formId));
-      const forms = await Promise.all(formPromises);
-  
-      res.status(200).json(forms);
-    } catch (err) {
-      next(err);
-    }
-  });
 
-// to store the response data
-router.post("/submit/:formId", async (req, res, next) => {
-    try{
-        const newResp = new Response(req.body);
-        const savedResp = await newResp.save();
-        res.status(200).json(savedResp)
-    } catch(err) {
-        next(err);
-    }
-})
 
-router.get("/responseCount/:formId", async (req, res, next) => {
-    try {
-      const formId = req.params.formId;
-      const count = await Response.countDocuments({ formId });
-      res.status(200).json({ success: true, count: count });
-    } catch (err) {
-      next(err);
-    }
-  });
-  
 
-//to store response in excel
-router.post("/student_response/:doc_name", (req, res) => {
-    var docs_data = req.body;
-    var name = req.params.doc_name;
-    let workbook = new excel.Workbook();
-    var data = req.body.answer_data;
-    let worksheet = workbook.addWorksheet(`${name}`);
-
-    worksheet.columns = [{ header: "Time Stamp", key: "datetime" }, ...docs_data.column];
-    worksheet.columns.forEach(column => {
-        column.width = column.header.length < 12 ? 12 : column.header.length;
-    });
-
-    worksheet.getRow(1).font = { bold: true };
-    data.forEach(e => {
-        worksheet.addRow({ datetime: new Date(), ...e }); // Assuming datetime should be the timestamp for each row
-    });
-
-    workbook.xlsx.writeFile(`${name}.xlsx`).then(() => {
-        res.send("Excel file generated and saved successfully");
-    }).catch(err => {
-        console.error("Error generating Excel file:", err);
-        res.status(500).send("Error generating Excel file");
-    });
-});
 
 
 export default router
