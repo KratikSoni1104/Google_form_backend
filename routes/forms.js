@@ -49,7 +49,7 @@ router.get("/get_all_filenames/:UserId", async (req, res, next) => {
   });
 
   //to read status of form
-  router.get("readStatus/:formId", async (req, res, next) => {
+  router.get("/readStatus/:formId", async (req, res, next) => {
     const formId = req.params.formId;
     try{
         const form = await Form.findById(formId);
